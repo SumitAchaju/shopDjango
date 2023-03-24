@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-h9bpa87h3#y%c+_i_hejwk#^nf^2$+!(81pmw^h)*@4on)7u98
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost',"192.168.0.108"]
+ALLOWED_HOSTS = ['localhost',"192.168.0.109"]
 
 
 # Application definition
@@ -51,12 +51,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'shopsystem.urls'
@@ -181,5 +181,5 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    'http://192.168.0.108:5173'
+    'http://192.168.0.109:5173'
 ]

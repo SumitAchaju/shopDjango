@@ -21,3 +21,5 @@ class Product(models.Model):
     increment_percentage = models.FloatField(default=0)
     increment_rate = models.FloatField(default=0)
     latest_bill_date = models.DateField(default=datetime.date.today)
+    latest_bill_id = models.IntegerField(default=1)
+
