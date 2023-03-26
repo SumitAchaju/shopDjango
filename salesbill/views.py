@@ -10,17 +10,44 @@ class SalesBillViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         product_name = request.data.pop('product')
-        product_instance = Product.objects.get(product_name=product_name)
-        product_instance.in_stock -= request.data["pcs"] 
-        product_instance=product_instance.save()
+        product_instance = Product.objects.filter(product_name=product_name)
+        if product_instance:
+            product_instance = product_instance[0]
+        else:
+            return Response( status=status.HTTP_400_BAD_REQUEST)
+        if product_instance.in_stock - int(request.data["pcs"]) < 0:
+            print(product_instance.in_stock)
+            print(request.data["pcs"])
+            return Response( status=status.HTTP_400_BAD_REQUEST)
+        
+        product_instance.in_stock -= int(request.data['pcs'])
+        product_instance.save()
+
         bill_data = calculate(request.data,product_instance)
         serializer = self.get_serializer(data=bill_data)
+
         if serializer.is_valid():
             serializer.save(product=product_instance)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, *args, **kwargs):
+        bill = self.get_object()
+        product_name = request.data.pop('product')
+        product_instance = Product.objects.get(product_name=product_name)
+
+        product_instance.in_stock += bill.amount_in_pcs
+        product_instance.in_stock -= int(request.data["pcs"])
+        product_instance.save()
+
+        bill_data = calculate(request.data,product_instance)
+        
+        for key,value in bill_data.items():
+            request.data[key] = value
+
+        return super().partial_update(request, *args, **kwargs)
     
 
 def calculate(data,product):

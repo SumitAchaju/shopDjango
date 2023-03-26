@@ -19,12 +19,14 @@ class ImportBillViewSet(viewsets.ModelViewSet):
         bill_data = product_and_bill["bill_data"]
 
         # Checking if Product already exists or not
-        is_product_exists = Product.objects.filter(product_name=data['productName'])
+        is_product_exists = Product.objects.filter(
+            product_name=data['productName'])
         if is_product_exists:
-            product_serializer = ProductSerializer(is_product_exists[0],data=product_data)
+            product_serializer = ProductSerializer(
+                is_product_exists[0], data=product_data)
         else:
             product_serializer = ProductSerializer(data=product_data)
-        
+
         # First saving the nested Product Instance
         if product_serializer.is_valid():
             product_instance = product_serializer.save()
@@ -37,12 +39,62 @@ class ImportBillViewSet(viewsets.ModelViewSet):
                 # Storing the latest bill id to product instance
                 product_instance.latest_bill_id = bill_instance.id
                 product_instance.save()
-                
+
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def update(self, request, *args, **kwargs):
-        return 
+        return
+
+    def partial_update(self, request, *args, **kwargs):
+        # Getting the required bill to be updated
+        instance = self.get_object()
+        product = Product.objects.filter(
+                product_name=request.data["productName"])
+        # Checking if user input product already exists or not if not returning the bad request
+        if not product:
+            print("not product")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # checking if the user input product is different than previous if it does, returning the bad request
+        if product[0].id != instance.product.id:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # Now calculating and formating the required data
+        if request.data["discountType"] == "%":
+            discount_rate = request.data["discount"]
+            discount_percentage = discount_rate/100 * request.data["rate"]
+        else:
+            discount_percentage = request.data["discount"]
+            discount_rate = discount_percentage * 100 / request.data["rate"]
+        data = {
+            "total_price": request.data["buy"],
+            "amount_in_pcs": request.data["quantity"],
+            "amount_in_kg": request.data["kg"],
+            "rate": request.data["rate"],
+            "our_rate": request.data["ourRate"],
+            "date": request.data["date"],
+            "discount_rate": discount_rate,
+            "discount_percentage": discount_percentage
+        }
+        # checking if current bill is linked to latest product or not if it does changing the product data according to bill
+        if product[0].latest_bill_id == instance.id:
+            product_price = product[0].increment_rate + data["our_rate"]
+            product_update_data = {
+                "price": product_price,
+                "rate": data["rate"],
+                "our_rate": data["our_rate"],
+                "discount_rate": discount_rate,
+                "discount_percentage": discount_percentage,
+                "latest_bill_date": data["date"]
+            }
+            product_serializer = ProductSerializer(
+                product[0], data=product_update_data, partial=True)
+            if product_serializer.is_valid():
+                product_serializer.save()
+
+        # saving the bill if its product is same as previous
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
