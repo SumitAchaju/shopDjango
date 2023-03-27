@@ -43,7 +43,7 @@ class ImportBillViewSet(viewsets.ModelViewSet):
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response( status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
         return
@@ -73,7 +73,7 @@ class ImportBillViewSet(viewsets.ModelViewSet):
             "amount_in_kg": request.data["kg"],
             "rate": request.data["rate"],
             "our_rate": request.data["ourRate"],
-            "date": request.data["date"],
+            "import_date": request.data["date"],
             "discount_rate": discount_rate,
             "discount_percentage": discount_percentage
         }
@@ -86,15 +86,15 @@ class ImportBillViewSet(viewsets.ModelViewSet):
                 "our_rate": data["our_rate"],
                 "discount_rate": discount_rate,
                 "discount_percentage": discount_percentage,
-                "latest_bill_date": data["date"]
+                "latest_bill_date": data["import_date"]
             }
             product_serializer = ProductSerializer(
                 product[0], data=product_update_data, partial=True)
             if product_serializer.is_valid():
                 product_serializer.save()
 
-        # saving the bill if its product is same as previous
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        return Response(serializer.data)
+        new_serializer = self.get_serializer(self.get_object(),many=False)
+        return Response(new_serializer.data,status=status.HTTP_200_OK)
