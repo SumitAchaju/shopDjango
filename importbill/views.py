@@ -43,16 +43,13 @@ class ImportBillViewSet(viewsets.ModelViewSet):
                 headers = self.get_success_headers(serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-        return Response( status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, *args, **kwargs):
-        return
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, *args, **kwargs):
         # Getting the required bill to be updated
         instance = self.get_object()
         product = Product.objects.filter(
-                product_name=request.data["productName"])
+            product_name=request.data["productName"])
         # Checking if user input product already exists or not if not returning the bad request
         if not product:
             print("not product")
@@ -96,5 +93,5 @@ class ImportBillViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        new_serializer = self.get_serializer(self.get_object(),many=False)
-        return Response(new_serializer.data,status=status.HTTP_200_OK)
+        new_serializer = self.get_serializer(self.get_object(), many=False)
+        return Response(new_serializer.data, status=status.HTTP_200_OK)

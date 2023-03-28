@@ -1,5 +1,5 @@
-from rest_framework import viewsets,status
-from .models import Sales_Bill,Product
+from rest_framework import viewsets, status
+from .models import Sales_Bill, Product
 from .serializers import SalesBillSerializer
 from rest_framework.response import Response
 
@@ -14,16 +14,16 @@ class SalesBillViewSet(viewsets.ModelViewSet):
         if product_instance:
             product_instance = product_instance[0]
         else:
-            return Response( status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         if product_instance.in_stock - int(request.data["pcs"]) < 0:
             print(product_instance.in_stock)
             print(request.data["pcs"])
-            return Response( status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         product_instance.in_stock -= int(request.data['pcs'])
         product_instance.save()
 
-        bill_data = calculate(request.data,product_instance)
+        bill_data = calculate(request.data, product_instance)
         serializer = self.get_serializer(data=bill_data)
 
         if serializer.is_valid():
@@ -32,7 +32,7 @@ class SalesBillViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def partial_update(self, request, *args, **kwargs):
         bill = self.get_object()
         product_name = request.data.pop('product')
@@ -42,15 +42,15 @@ class SalesBillViewSet(viewsets.ModelViewSet):
         product_instance.in_stock -= int(request.data["pcs"])
         product_instance.save()
 
-        bill_data = calculate(request.data,product_instance)
-        
-        for key,value in bill_data.items():
+        bill_data = calculate(request.data, product_instance)
+
+        for key, value in bill_data.items():
             request.data[key] = value
 
         return super().partial_update(request, *args, **kwargs)
-    
 
-def calculate(data,product):
+
+def calculate(data, product):
     pcs = data.pop("pcs")
     total_sales_price = data.pop("amount")
     our_rate = product.our_rate
@@ -65,14 +65,13 @@ def calculate(data,product):
     discount_percentage_on_sales = discount_on_sales * 100 / our_sales_price
 
     required_data = {
-        "amount_in_pcs":pcs,
-        "total_sales":total_sales_price,
-        "total_profit":total_profit,
-        "profit":profit,
-        "discount_percentage":discount_percentage_on_sales,
-        "discount_rate":discount_on_sales,
-        "sales_date":data.pop("date")
+        "amount_in_pcs": pcs,
+        "total_sales": total_sales_price,
+        "total_profit": total_profit,
+        "profit": profit,
+        "discount_percentage": discount_percentage_on_sales,
+        "discount_rate": discount_on_sales,
+        "sales_date": data.pop("date")
     }
 
     return required_data
-    

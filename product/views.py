@@ -1,4 +1,4 @@
-from rest_framework import viewsets,status
+from rest_framework import viewsets, status
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.response import Response
@@ -23,4 +23,3 @@ class ProductViewSet(viewsets.ModelViewSet):
         if int(request.data["in_stock"]) < 0:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return super().partial_update(request, *args, **kwargs)
-    
