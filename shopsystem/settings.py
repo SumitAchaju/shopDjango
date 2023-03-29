@@ -23,10 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-h9bpa87h3#y%c+_i_hejwk#^nf^2$+!(81pmw^h)*@4on)7u98'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["sumitshop.pythonanywhere.com"]
 
 
 # Application definition
@@ -86,10 +83,10 @@ WSGI_APPLICATION = 'shopsystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'shop',
-        'USER': 'root',
-        'PASSWORD': 'datakey',
-        'HOST': '127.0.0.1',
+        'NAME': 'SumitShop$shop',
+        'USER': 'SumitShop',
+        'PASSWORD': 'mysql#139931',
+        'HOST': 'SumitShop.mysql.pythonanywhere-services.com',
         'PORT': '3306',
     }
 }
@@ -129,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

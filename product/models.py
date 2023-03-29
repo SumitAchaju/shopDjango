@@ -23,3 +23,6 @@ class Product(models.Model):
     latest_bill_date = models.DateField(default=datetime.date.today)
     latest_bill_id = models.IntegerField(default=1)
 
+    def __str__(self):
+        return self.product_name
+

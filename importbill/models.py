@@ -11,3 +11,7 @@ class Import_Bill(models.Model):
     rate = models.FloatField()
     our_rate = models.FloatField()
     import_date = models.DateField()
+
+
+    def __str__(self):
+        return self.import_date

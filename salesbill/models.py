@@ -10,3 +10,6 @@ class Sales_Bill(models.Model):
     discount_percentage = models.FloatField()
     discount_rate = models.FloatField()
     sales_date = models.DateField()
+
+    def __str__(self):
+        return self.sales_date
