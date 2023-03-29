@@ -58,7 +58,7 @@ class ImportBillViewSet(viewsets.ModelViewSet):
         if product[0].id != instance.product.id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         # Now calculating and formating the required data
-        if request.data["discountType"] == "%":
+        if request.data["discountType"] == "Rs":
             discount_rate = request.data["discount"]
             discount_percentage = discount_rate/100 * request.data["rate"]
         else:
