@@ -14,4 +14,4 @@ class Import_Bill(models.Model):
 
 
     def __str__(self):
-        return self.import_date
+        return f"{self.import_date}"

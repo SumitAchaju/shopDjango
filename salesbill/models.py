@@ -12,4 +12,4 @@ class Sales_Bill(models.Model):
     sales_date = models.DateField()
 
     def __str__(self):
-        return self.sales_date
+        return f"{self.sales_date}"
