@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-h9bpa87h3#y%c+_i_hejwk#^nf^2$+!(81pmw^h)*@4on)7u98'
 
-ALLOWED_HOSTS = ["sumitshop.pythonanywhere.com"]
+ALLOWED_HOSTS = ["sumitshop.pythonanywhere.com", "localhost", "127.0.0.1"]
 
-
+DEBUG = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -82,12 +82,8 @@ WSGI_APPLICATION = 'shopsystem.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SumitShop$shop',
-        'USER': 'SumitShop',
-        'PASSWORD': 'mysql#139931',
-        'HOST': 'SumitShop.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
